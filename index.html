@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Birdy</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HOME SCREEN -->
+    <div id="homeScreen">
+
+        <h1 id="gameTitle">
+            🐦 Flappy Birdy
+        </h1>
+
+        <div id="statsBox">
+            <p>🪙 Coins: <span id="coinDisplay">0</span></p>
+            <p>🏆 High Score: <span id="highScoreDisplay">0</span></p>
+        </div>
+
+        <div id="homeButtons">
+            <button id="playBtn">
+                ▶ PLAY
+            </button>
+
+            <button id="shopBtn">
+                🏪 SHOP
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- SHOP SCREEN -->
+    <div id="shopScreen">
+
+        <h1>
+            🏪 Bird Shop
+        </h1>
+
+        <div id="shopCoins">
+            Coins:
+            <span id="shopCoinCount">
+                0
+            </span>
+        </div>
+
+        <div id="skinsContainer">
+
+            <div class="skinCard">
+
+                <img src="skin1.png">
+
+                <h3>Skin 1</h3>
+
+                <p>50 Coins</p>
+
+                <button class="buySkin"
+                        data-skin="skin1.png"
+                        data-cost="50">
+                    Buy
+                </button>
+
+            </div>
+
+            <div class="skinCard">
+
+                <img src="skin2.png">
+
+                <h3>Skin 2</h3>
+
+                <p>100 Coins</p>
+
+                <button class="buySkin"
+                        data-skin="skin2.png"
+                        data-cost="100">
+                    Buy
+                </button>
+
+            </div>
+
+            <div class="skinCard">
+
+                <img src="skin3.png">
+
+                <h3>Skin 3</h3>
+
+                <p>150 Coins</p>
+
+                <button class="buySkin"
+                        data-skin="skin3.png"
+                        data-cost="150">
+                    Buy
+                </button>
+
+            </div>
+
+            <div class="skinCard">
+
+                <img src="skin4.png">
+
+                <h3>Skin 4</h3>
+
+                <p>200 Coins</p>
+
+                <button class="buySkin"
+                        data-skin="skin4.png"
+                        data-cost="200">
+                    Buy
+                </button>
+
+            </div>
+
+            <div class="skinCard">
+
+                <img src="skin5.png">
+
+                <h3>Skin 5</h3>
+
+                <p>250 Coins</p>
+
+                <button class="buySkin"
+                        data-skin="skin5.png"
+                        data-cost="250">
+                    Buy
+                </button>
+
+            </div>
+
+            <div class="skinCard">
+
+                <img src="skin6.png">
+
+                <h3>Skin 6</h3>
+
+                <p>300 Coins</p>
+
+                <button class="buySkin"
+                        data-skin="skin6.png"
+                        data-cost="300">
+                    Buy
+                </button>
+
+            </div>
+
+            <div class="skinCard">
+
+                <img src="skin7.png">
+
+                <h3>Skin 7</h3>
+
+                <p>500 Coins</p>
+
+                <button class="buySkin"
+                        data-skin="skin7.png"
+                        data-cost="500">
+                    Buy
+                </button>
+
+            </div>
+
+        </div>
+
+        <button id="backFromShop">
+            ⬅ Back
+        </button>
+
+    </div>
+
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen">
+
+        <canvas id="gameCanvas"
+                width="1280"
+                height="720">
+        </canvas>
+
+    </div>
+
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameOverScreen">
+
+        <h1 id="gameOverTitle">
+            GAME OVER
+        </h1>
+
+        <div id="scoreCard">
+
+            <div class="scoreRow">
+                <span>SCORE</span>
+                <span id="finalScore">
+                    0
+                </span>
+            </div>
+
+            <div class="scoreRow">
+                <span>HIGH SCORE</span>
+                <span id="finalHighScore">
+                    0
+                </span>
+            </div>
+
+            <div class="scoreRow">
+                <span>COINS</span>
+                <span id="earnedCoins">
+                    0
+                </span>
+            </div>
+
+        </div>
+
+        <div id="gameOverButtons">
+
+            <button id="playAgainBtn">
+                PLAY AGAIN
+            </button>
+
+            <button id="homeBtn">
+                HOME
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- SPRITES -->
+    <img id="defaultBird"
+         src="bird.png"
+         hidden>
+
+    <img id="pipeSprite"
+         src="pipe.png"
+         hidden>
+
+
+    <!-- SOUNDS -->
+    <audio id="swoosh"
+           src="swoosh.mp3">
+    </audio>
+
+    <audio id="point"
+           src="point.mp3">
+    </audio>
+
+    <audio id="flap"
+           src="flap.mp3">
+    </audio>
+
+    <audio id="hit"
+           src="flappy-bird-hit-sound.mp3">
+    </audio>
+
+    <audio id="die"
+           src="die.mp3">
+    </audio>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="script.js"></script>
+
+</body>
+</html>

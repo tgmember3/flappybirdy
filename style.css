@@ -1,0 +1,348 @@
+/* =========================
+   FLAPPY BIRDY STYLE.CSS
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#4ec0ca;
+    overflow:hidden;
+    user-select:none;
+}
+
+/* =========================
+   HOME SCREEN
+========================= */
+
+#homeScreen{
+    width:100vw;
+    height:100vh;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    gap:20px;
+}
+
+#gameTitle{
+    font-size:70px;
+    color:white;
+
+    text-shadow:
+    4px 4px 0px black;
+}
+
+#statsBox{
+    background:white;
+
+    padding:20px;
+
+    border-radius:15px;
+
+    min-width:280px;
+
+    text-align:center;
+
+    border:4px solid black;
+}
+
+#statsBox p{
+    font-size:25px;
+    margin:10px;
+}
+
+#homeButtons{
+    display:flex;
+    gap:20px;
+}
+
+#playBtn,
+#shopBtn{
+    font-size:28px;
+
+    padding:15px 35px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:0.2s;
+}
+
+#playBtn{
+    background:#4caf50;
+    color:white;
+}
+
+#shopBtn{
+    background:#ff9800;
+    color:white;
+}
+
+#playBtn:hover,
+#shopBtn:hover{
+    transform:scale(1.05);
+}
+
+/* =========================
+   SHOP SCREEN
+========================= */
+
+#shopScreen{
+    display:none;
+
+    width:100vw;
+    height:100vh;
+
+    padding:20px;
+
+    text-align:center;
+
+    overflow-y:auto;
+}
+
+#shopScreen h1{
+    font-size:60px;
+    color:white;
+
+    text-shadow:
+    3px 3px black;
+}
+
+#shopCoins{
+    margin-top:15px;
+
+    font-size:30px;
+
+    color:white;
+}
+
+#skinsContainer{
+    display:flex;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+    gap:20px;
+
+    margin-top:25px;
+}
+
+.skinCard{
+    background:white;
+
+    width:220px;
+
+    border-radius:20px;
+
+    border:4px solid black;
+
+    padding:15px;
+}
+
+.skinCard img{
+    width:100px;
+    height:100px;
+
+    image-rendering:pixelated;
+}
+
+.skinCard h3{
+    margin-top:10px;
+}
+
+.skinCard p{
+    margin-top:8px;
+}
+
+.skinCard button{
+    margin-top:12px;
+
+    padding:10px 20px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#4caf50;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+.skinCard button:hover{
+    opacity:0.9;
+}
+
+#backFromShop{
+    margin-top:25px;
+
+    padding:12px 30px;
+
+    font-size:22px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#e53935;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+/* =========================
+   GAME SCREEN
+========================= */
+
+#gameScreen{
+    display:none;
+
+    width:100vw;
+    height:100vh;
+
+    justify-content:center;
+    align-items:center;
+}
+
+#gameCanvas{
+    background:#70c5ce;
+
+    border:5px solid rgba(0,0,0,0.6);
+
+    border-radius:20px;
+
+    box-shadow:
+    0px 0px 25px rgba(0,0,0,0.5);
+
+    max-width:95vw;
+    max-height:95vh;
+}
+
+/* =========================
+   GAME OVER SCREEN
+========================= */
+
+#gameOverScreen{
+    display:none;
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:500px;
+
+    text-align:center;
+}
+
+#gameOverTitle{
+    font-size:70px;
+
+    color:#ff9800;
+
+    text-shadow:
+    4px 4px white,
+    6px 6px black;
+
+    margin-bottom:20px;
+}
+
+#scoreCard{
+    background:#ded895;
+
+    border:8px solid #8b6f47;
+
+    border-radius:10px;
+
+    padding:20px;
+}
+
+.scoreRow{
+    display:flex;
+
+    justify-content:space-between;
+
+    margin:15px 0;
+
+    font-size:28px;
+
+    font-weight:bold;
+}
+
+#gameOverButtons{
+    margin-top:20px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:20px;
+}
+
+#playAgainBtn,
+#homeBtn{
+    padding:14px 30px;
+
+    font-size:24px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+#playAgainBtn{
+    background:#4caf50;
+    color:white;
+}
+
+#homeBtn{
+    background:#2196f3;
+    color:white;
+}
+
+#playAgainBtn:hover,
+#homeBtn:hover{
+    transform:scale(1.05);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:700px){
+
+    #gameTitle{
+        font-size:45px;
+    }
+
+    #scoreCard{
+        width:90vw;
+    }
+
+    #gameOverScreen{
+        width:90vw;
+    }
+
+    .skinCard{
+        width:160px;
+    }
+
+}
