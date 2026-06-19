@@ -1,8 +1,10 @@
 // =========================
 // FLAPPY BIRDY
 // PART A
+// VARIABLES + SAVE SYSTEM
 // =========================
 
+// Screens
 const homeScreen =
 document.getElementById("homeScreen");
 
@@ -15,6 +17,7 @@ document.getElementById("gameScreen");
 const gameOverScreen =
 document.getElementById("gameOverScreen");
 
+// Buttons
 const playBtn =
 document.getElementById("playBtn");
 
@@ -30,16 +33,21 @@ document.getElementById("playAgainBtn");
 const homeBtn =
 document.getElementById("homeBtn");
 
+// Canvas
 const canvas =
 document.getElementById("gameCanvas");
 
 const ctx =
 canvas.getContext("2d");
 
-// =========================
-// SOUNDS
-// =========================
+// Images
+const pipeImage =
+document.getElementById("pipeSprite");
 
+const birdImage =
+new Image();
+
+// Sounds
 const swoosh =
 document.getElementById("swoosh");
 
@@ -75,34 +83,34 @@ localStorage.getItem("selectedSkin")
 
 let unlockedSkins =
 JSON.parse(
-localStorage.getItem("unlockedSkins")
+localStorage.getItem(
+"unlockedSkins"
+)
 )
 || ["bird.png"];
 
-// =========================
-// UI
-// =========================
-
-function updateUI(){
-
-document.getElementById(
-"coinDisplay"
-).innerText = coins;
-
-document.getElementById(
-"highScoreDisplay"
-).innerText = highScore;
-
-document.getElementById(
-"shopCoinCount"
-).innerText = coins;
-
-}
-
-updateUI();
+// Load selected bird
+birdImage.src =
+selectedSkin;
 
 // =========================
-// SAVE
+// GAME VARIABLES
+// =========================
+
+let bird = null;
+
+let pipes = [];
+
+let score = 0;
+
+let earnedCoins = 0;
+
+let gameStarted = false;
+
+let gameOver = false;
+
+// =========================
+// SAVE FUNCTION
 // =========================
 
 function saveGame(){
@@ -134,9 +142,48 @@ updateUI();
 }
 
 // =========================
-// SCREENS
+// UI UPDATE
 // =========================
 
+function updateUI(){
+
+const coinDisplay =
+document.getElementById(
+"coinDisplay"
+);
+
+const highScoreDisplay =
+document.getElementById(
+"highScoreDisplay"
+);
+
+const shopCoinCount =
+document.getElementById(
+"shopCoinCount"
+);
+
+if(coinDisplay)
+coinDisplay.innerText =
+coins;
+
+if(highScoreDisplay)
+highScoreDisplay.innerText =
+highScore;
+
+if(shopCoinCount)
+shopCoinCount.innerText =
+coins;
+
+}
+
+updateUI();
+
+// =========================
+// PART B
+// HOME + SHOP
+// =========================
+
+// Show Home
 function showHome(){
 
 homeScreen.style.display =
@@ -155,6 +202,7 @@ updateUI();
 
 }
 
+// Show Shop
 function showShop(){
 
 homeScreen.style.display =
@@ -171,58 +219,93 @@ gameOverScreen.style.display =
 
 updateUI();
 
+refreshShop();
+
 }
 
-playBtn.onclick = ()=>{
-
-swoosh.currentTime = 0;
-swoosh.play();
-
-startGame();
-
-};
-
-shopBtn.onclick = ()=>{
-
-swoosh.currentTime = 0;
-swoosh.play();
-
-showShop();
-
-};
-
-backFromShop.onclick = ()=>{
-
-swoosh.currentTime = 0;
-swoosh.play();
-
-showHome();
-
-};
-
 // =========================
-// SHOP SYSTEM
+// REFRESH SHOP
 // =========================
 
-const skinButtons =
+function refreshShop(){
+
+const buttons =
 document.querySelectorAll(
 ".buySkin"
 );
 
-skinButtons.forEach(button=>{
+buttons.forEach(button=>{
+
+const skin =
+button.dataset.skin;
+
+const cost =
+parseInt(
+button.dataset.cost
+);
+
+if(
+selectedSkin === skin
+){
+
+button.innerText =
+"SELECTED";
+
+button.style.background =
+"#2196f3";
+
+}
+else if(
+unlockedSkins.includes(
+skin
+)
+){
+
+button.innerText =
+"USE";
+
+button.style.background =
+"#4caf50";
+
+}
+else{
+
+button.innerText =
+cost + " COINS";
+
+button.style.background =
+"#ff9800";
+
+}
+
+});
+
+}
+
+// =========================
+// SHOP BUTTONS
+// =========================
+
+document
+.querySelectorAll(
+".buySkin"
+)
+.forEach(button=>{
 
 button.addEventListener(
 "click",
 
 ()=>{
 
-let skin =
+const skin =
 button.dataset.skin;
 
-let cost =
+const cost =
 parseInt(
 button.dataset.cost
 );
+
+// Already unlocked
 
 if(
 unlockedSkins.includes(
@@ -230,16 +313,21 @@ skin
 )
 ){
 
-selectedSkin = skin;
+selectedSkin =
+skin;
+
+birdImage.src =
+selectedSkin;
 
 saveGame();
 
-// Update all buttons to show proper state
-updateSkinButtons();
+refreshShop();
 
 return;
 
 }
+
+// Buy skin
 
 if(
 coins >= cost
@@ -251,11 +339,15 @@ unlockedSkins.push(
 skin
 );
 
-selectedSkin = skin;
+selectedSkin =
+skin;
+
+birdImage.src =
+selectedSkin;
 
 saveGame();
 
-updateSkinButtons();
+refreshShop();
 
 alert(
 "Skin Unlocked!"
@@ -276,138 +368,77 @@ alert(
 
 });
 
-// Function to update skin buttons
-function updateSkinButtons() {
-    skinButtons.forEach(button => {
-        let skin = button.dataset.skin;
-        if (unlockedSkins.includes(skin)) {
-            if (selectedSkin === skin) {
-                button.innerText = "SELECTED";
-                button.style.backgroundColor = "#4CAF50";
-            } else {
-                button.innerText = "SELECT";
-                button.style.backgroundColor = "#2196F3";
-            }
-        } else {
-            button.innerText = `BUY (${button.dataset.cost} coins)`;
-            button.style.backgroundColor = "#FF9800";
-        }
-    });
-}
-
-// Call this after loading
-setTimeout(updateSkinButtons, 100);
-
 // =========================
-// BIRD IMAGE
+// BUTTON EVENTS
 // =========================
 
-const birdImage =
-new Image();
+playBtn.onclick =
+()=>{
 
-// Load bird image with error handling
-birdImage.onerror = function() {
-    console.error("Failed to load bird image:", selectedSkin);
-    // Create a fallback bird (red circle)
-    birdImage.src = "";
+swoosh.currentTime = 0;
+
+swoosh.play();
+
+startGame();
+
 };
 
-// Generate a simple bird using canvas as fallback
-function createFallbackBird() {
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = 70;
-    tempCanvas.height = 70;
-    const tempCtx = tempCanvas.getContext('2d');
-    
-    // Draw a simple bird
-    tempCtx.fillStyle = '#FFD700';
-    tempCtx.beginPath();
-    tempCtx.arc(35, 35, 30, 0, Math.PI * 2);
-    tempCtx.fill();
-    
-    // Eye
-    tempCtx.fillStyle = 'white';
-    tempCtx.beginPath();
-    tempCtx.arc(45, 25, 10, 0, Math.PI * 2);
-    tempCtx.fill();
-    
-    tempCtx.fillStyle = 'black';
-    tempCtx.beginPath();
-    tempCtx.arc(48, 25, 5, 0, Math.PI * 2);
-    tempCtx.fill();
-    
-    // Beak
-    tempCtx.fillStyle = '#FF6B35';
-    tempCtx.beginPath();
-    tempCtx.moveTo(60, 35);
-    tempCtx.lineTo(70, 30);
-    tempCtx.lineTo(60, 25);
-    tempCtx.fill();
-    
-    birdImage.src = tempCanvas.toDataURL();
-}
+shopBtn.onclick =
+()=>{
 
-birdImage.src =
-selectedSkin;
+swoosh.currentTime = 0;
 
-function loadSelectedSkin(){
+swoosh.play();
 
-birdImage.src =
-selectedSkin;
-birdImage.onerror = createFallbackBird;
+showShop();
 
-}
+};
 
-loadSelectedSkin();
+backFromShop.onclick =
+()=>{
+
+swoosh.currentTime = 0;
+
+swoosh.play();
+
+showHome();
+
+};
+
+homeBtn.onclick =
+()=>{
+
+swoosh.currentTime = 0;
+
+swoosh.play();
+
+showHome();
+
+};
+
+playAgainBtn.onclick =
+()=>{
+
+swoosh.currentTime = 0;
+
+swoosh.play();
+
+startGame();
+
+};
 
 // =========================
-// GAME VARIABLES
+// INITIAL SCREEN
 // =========================
 
-let bird;
-let pipes = []; // Initialize pipes array
+showHome();
 
-let score;
-
-let earnedCoins;
-
-let gameStarted;
-
-let gameOver;
-
-// Pipe generation interval reference
-let pipeInterval;
+refreshShop();
 
 // =========================
-// PART B
+// PART C
 // GAMEPLAY
 // =========================
-
-const pipeImage =
-document.getElementById(
-"pipeSprite"
-);
-
-// Create fallback pipe image
-const pipeFallbackCanvas = document.createElement('canvas');
-pipeFallbackCanvas.width = 100;
-pipeFallbackCanvas.height = 400;
-const pipeCtx = pipeFallbackCanvas.getContext('2d');
-
-// Draw a simple pipe
-pipeCtx.fillStyle = '#4CAF50';
-pipeCtx.fillRect(20, 0, 60, 400);
-pipeCtx.fillStyle = '#388E3C';
-pipeCtx.fillRect(10, 0, 80, 30);
-pipeCtx.fillRect(10, 370, 80, 30);
-
-const fallbackPipeImage = new Image();
-fallbackPipeImage.src = pipeFallbackCanvas.toDataURL();
-
-// Use fallback if pipe image doesn't load
-pipeImage.onerror = function() {
-    this.src = fallbackPipeImage.src;
-};
 
 function startGame(){
 
@@ -423,7 +454,7 @@ gameOverScreen.style.display =
 gameScreen.style.display =
 "flex";
 
-loadSelectedSkin();
+// Reset Game
 
 bird = {
 
@@ -437,7 +468,7 @@ velocity:0
 
 };
 
-pipes = []; // Reset pipes array
+pipes = [];
 
 score = 0;
 
@@ -447,13 +478,16 @@ gameStarted = true;
 
 gameOver = false;
 
-// Clear any existing pipe interval
-if (pipeInterval) {
-    clearInterval(pipeInterval);
+birdImage.src =
+selectedSkin;
+
 }
 
-// Start pipe generation
-pipeInterval = setInterval(()=>{
+// =========================
+// JUMP
+// =========================
+
+function jump(){
 
 if(
 !gameStarted ||
@@ -461,10 +495,74 @@ gameOver
 )
 return;
 
-let gap = 230;
+bird.velocity = -9;
 
-let topHeight =
-Math.random() * 250 + 80;
+flapSound.currentTime = 0;
+
+flapSound.play();
+
+}
+
+// Keyboard
+
+document.addEventListener(
+"keydown",
+
+(event)=>{
+
+if(
+event.code === "Space"
+){
+
+jump();
+
+}
+
+}
+);
+
+// Mouse
+
+canvas.addEventListener(
+"click",
+
+()=>{
+
+jump();
+
+}
+);
+
+// Mobile
+
+canvas.addEventListener(
+"touchstart",
+
+()=>{
+
+jump();
+
+}
+);
+
+// =========================
+// PIPE GENERATOR
+// =========================
+
+setInterval(()=>{
+
+if(
+!gameStarted ||
+gameOver
+)
+return;
+
+const gap = 230;
+
+const topHeight =
+
+Math.random() * 250
++ 80;
 
 pipes.push({
 
@@ -483,55 +581,95 @@ passed:false
 
 },2000);
 
-}
-
 // =========================
-// JUMP
+// UPDATE GAME
 // =========================
 
-function jump(){
+function update(){
+
+if(!bird)
+return;
 
 if(
 !gameStarted ||
 gameOver
-) return;
+)
+return;
 
-bird.velocity = -9;
+// Gravity
 
-flapSound.currentTime = 0;
+bird.velocity += 0.5;
 
-flapSound.play();
+bird.y += bird.velocity;
 
-}
-
-document.addEventListener(
-"keydown",
-(e)=>{
+// Ceiling
 
 if(
-e.code === "Space"
+bird.y < 0
 ){
 
-e.preventDefault(); // Prevent page scroll
-jump();
+bird.y = 0;
+
+bird.velocity = 0;
+
+}
+
+// Ground
+
+if(
+bird.y +
+bird.height
+>=
+canvas.height
+){
+
+endGame();
+
+}
+
+// Move Pipes
+
+for(
+let pipe of pipes
+){
+
+pipe.x -= 4;
+
+// Score
+
+if(
+!pipe.passed &&
+
+pipe.x +
+pipe.width
+<
+bird.x
+){
+
+pipe.passed =
+true;
+
+score++;
+
+coins += 2;
+
+earnedCoins += 2;
+
+saveGame();
+
+pointSound.currentTime = 0;
+
+pointSound.play();
 
 }
 
 }
-);
 
-canvas.addEventListener(
-"click",
-jump
-);
-
-canvas.addEventListener(
-"touchstart",
-jump
-);
+}
 
 // =========================
-// GAME OVER
+// PART D
+// COLLISION + DRAW
 // =========================
 
 function endGame(){
@@ -541,11 +679,7 @@ return;
 
 gameOver = true;
 
-// Clear pipe interval
-if (pipeInterval) {
-    clearInterval(pipeInterval);
-    pipeInterval = null;
-}
+// Sounds
 
 hitSound.currentTime = 0;
 hitSound.play();
@@ -557,15 +691,19 @@ dieSound.play();
 
 },200);
 
+// High Score
+
 if(
 score > highScore
 ){
 
 highScore = score;
 
+saveGame();
+
 }
 
-saveGame();
+// Update Game Over UI
 
 document.getElementById(
 "finalScore"
@@ -581,6 +719,8 @@ document.getElementById(
 ).innerText =
 earnedCoins;
 
+// Show Screen
+
 setTimeout(()=>{
 
 gameOverScreen.style.display =
@@ -591,144 +731,55 @@ gameOverScreen.style.display =
 }
 
 // =========================
-// PLAY AGAIN
+// COLLISION
 // =========================
 
-playAgainBtn.onclick =
-()=>{
+function checkCollision(){
 
-swoosh.currentTime = 0;
-swoosh.play();
-
-startGame();
-
-};
-
-homeBtn.onclick =
-()=>{
-
-swoosh.currentTime = 0;
-swoosh.play();
-
-showHome();
-
-};
-
-// =========================
-// UPDATE
-// =========================
-
-function update(){
-
-if(
-!gameStarted ||
-gameOver
-)
+if(!bird)
 return;
 
-bird.velocity += 0.5;
+// Smaller hitbox
 
-bird.y += bird.velocity;
+const hitX =
+bird.x + 12;
 
-// Ground
+const hitY =
+bird.y + 12;
+
+const hitW = 45;
+
+const hitH = 45;
+
+for(
+let pipe of pipes
+){
 
 if(
-bird.y +
-bird.height
->=
-canvas.height
+
+hitX + hitW >
+pipe.x &&
+
+hitX <
+pipe.x +
+pipe.width &&
+
+(
+
+hitY <
+pipe.top ||
+
+hitY + hitH >
+pipe.bottom
+
+)
+
 ){
 
 endGame();
 
 }
 
-// Ceiling
-
-if(
-bird.y < 0
-){
-
-bird.y = 0;
-
-}
-
-// Pipes - check if pipes array exists and has items
-if (pipes && pipes.length > 0) {
-    for(
-    let i = pipes.length - 1; i >= 0; i--
-    ){
-        let pipe = pipes[i];
-
-        pipe.x -= 4;
-
-        // Coins + Score
-        if(
-        !pipe.passed &&
-        pipe.x +
-        pipe.width <
-        bird.x
-        ){
-
-        pipe.passed = true;
-
-        score++;
-
-        coins += 2;
-
-        earnedCoins += 2;
-
-        saveGame();
-
-        pointSound.currentTime = 0;
-
-        pointSound.play();
-
-        }
-
-        // Accurate Hitbox
-        let hitX =
-        bird.x + 12;
-
-        let hitY =
-        bird.y + 12;
-
-        let hitW =
-        45;
-
-        let hitH =
-        45;
-
-        if(
-
-        hitX + hitW >
-        pipe.x &&
-
-        hitX <
-        pipe.x +
-        pipe.width &&
-
-        (
-
-        hitY <
-        pipe.top ||
-
-        hitY + hitH >
-        pipe.bottom
-
-        )
-
-        ){
-
-        endGame();
-
-        }
-
-        // Remove old pipes
-        if (pipe.x + pipe.width < -150) {
-            pipes.splice(i, 1);
-        }
-    }
 }
 
 }
@@ -758,110 +809,83 @@ canvas.width,
 canvas.height
 );
 
+// Don't draw if game not started
+
+if(!bird)
+return;
+
 // Pipes
-if (pipes && pipes.length > 0) {
-    for(
-    let pipe of pipes
-    ){
 
-    // Top Pipe
-    ctx.save();
+for(
+let pipe of pipes
+){
 
-    ctx.translate(
-    pipe.x +
-    pipe.width / 2,
+// Top Pipe
 
-    pipe.top
-    );
+ctx.save();
 
-    ctx.scale(
-    1,
-    -1
-    );
+ctx.translate(
+pipe.x +
+pipe.width / 2,
 
-    // Check if pipeImage loaded properly
-    if (pipeImage && pipeImage.complete && pipeImage.naturalWidth > 0) {
-        ctx.drawImage(
+pipe.top
+);
 
-        pipeImage,
+ctx.scale(
+1,
+-1
+);
 
-        -pipe.width/2,
+ctx.drawImage(
 
-        0,
+pipeImage,
 
-        pipe.width,
+-pipe.width / 2,
 
-        pipe.top
+0,
 
-        );
-    } else {
-        // Use fallback
-        ctx.fillStyle = '#4CAF50';
-        ctx.fillRect(-pipe.width/2, 0, pipe.width, pipe.top);
-        ctx.fillStyle = '#388E3C';
-        ctx.fillRect(-pipe.width/2 - 10, 0, pipe.width + 20, 30);
-    }
+pipe.width,
 
-    ctx.restore();
+pipe.top
 
-    // Bottom Pipe
-    if (pipeImage && pipeImage.complete && pipeImage.naturalWidth > 0) {
-        ctx.drawImage(
+);
 
-        pipeImage,
+ctx.restore();
 
-        pipe.x,
+// Bottom Pipe
 
-        pipe.bottom,
+ctx.drawImage(
 
-        pipe.width,
+pipeImage,
 
-        canvas.height -
-        pipe.bottom
+pipe.x,
 
-        );
-    } else {
-        ctx.fillStyle = '#4CAF50';
-        ctx.fillRect(pipe.x, pipe.bottom, pipe.width, canvas.height - pipe.bottom);
-        ctx.fillStyle = '#388E3C';
-        ctx.fillRect(pipe.x - 10, pipe.bottom, pipe.width + 20, 30);
-    }
+pipe.bottom,
 
-    }
+pipe.width,
+
+canvas.height -
+pipe.bottom
+
+);
+
 }
 
 // Bird
-if (birdImage && birdImage.complete && birdImage.naturalWidth > 0) {
-    ctx.drawImage(
 
-    birdImage,
+ctx.drawImage(
 
-    bird.x,
+birdImage,
 
-    bird.y,
+bird.x,
 
-    bird.width,
+bird.y,
 
-    bird.height
+bird.width,
 
-    );
-} else {
-    // Fallback bird
-    ctx.fillStyle = '#FFD700';
-    ctx.beginPath();
-    ctx.arc(bird.x + 35, bird.y + 35, 30, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.arc(bird.x + 45, bird.y + 25, 10, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.fillStyle = 'black';
-    ctx.beginPath();
-    ctx.arc(bird.x + 48, bird.y + 25, 5, 0, Math.PI * 2);
-    ctx.fill();
-}
+bird.height
+
+);
 
 // Score
 
@@ -891,15 +915,49 @@ ctx.fillText(
 
 );
 
+ctx.fillText(
+
+"Best: " + highScore,
+
+20,
+
+150
+
+);
+
 }
 
 // =========================
-// GAME LOOP
+// CLEAN PIPES
+// =========================
+
+function removeOldPipes(){
+
+pipes =
+pipes.filter(
+
+pipe =>
+
+pipe.x +
+pipe.width >
+
+-150
+
+);
+
+}
+
+// =========================
+// MAIN LOOP
 // =========================
 
 function gameLoop(){
 
 update();
+
+checkCollision();
+
+removeOldPipes();
 
 draw();
 
@@ -912,7 +970,29 @@ gameLoop
 gameLoop();
 
 // =========================
-// START
+// IMAGE DEBUG
+// =========================
+
+birdImage.onload =
+()=>{
+
+console.log(
+"Bird Loaded"
+);
+
+};
+
+pipeImage.onload =
+()=>{
+
+console.log(
+"Pipe Loaded"
+);
+
+};
+
+// =========================
+// START SCREEN
 // =========================
 
 showHome();
